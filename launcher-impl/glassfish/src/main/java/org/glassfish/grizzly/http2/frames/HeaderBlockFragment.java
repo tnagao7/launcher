@@ -73,6 +73,7 @@ public abstract class HeaderBlockFragment extends Http2Frame {
         }
 
         compressedHeaders = null;
+        truncated = false;
         super.recycle();
     }
 

@@ -595,7 +595,11 @@ public abstract class Http2BaseFilter extends HttpBaseFilter {
 
         if (headerBlockFragment.getCompressedHeaders().hasRemaining()) {
             if (!headersDecoder.append(headerBlockFragment.takePayload())) {
-                headersDecoder.setFirstHeaderFrame((HeaderBlockHead) headerBlockFragment);
+                if (headersDecoder.isProcessingHeaders()) {
+                    headerBlockFragment.recycle(); // Recycle continuation frame
+                } else {
+                    headersDecoder.setFirstHeaderFrame((HeaderBlockHead) headerBlockFragment);
+                }
                 final HeaderBlockHead firstHeaderFrame = headersDecoder.finishHeader();
                 firstHeaderFrame.setTruncated();
                 try {
